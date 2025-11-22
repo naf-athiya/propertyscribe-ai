@@ -5,6 +5,7 @@ import { GeneratedOutput } from "@/components/GeneratedOutput";
 import { Card } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -27,34 +28,29 @@ const Index = () => {
     setIsGenerating(true);
     
     try {
-      // TODO: Call edge function with LLM
-      // Placeholder for now - will be replaced with actual API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock output for testing
-      const mockOutput = {
-        short_hook: "Tanah Strategis BSD - Investasi Menguntungkan!",
-        ad_copy: `Tanah premium di ${data.location}, ${data.size}. Harga spesial ${data.price}. Lokasi strategis dengan akses mudah ke fasilitas utama. Cocok untuk investasi jangka panjang atau bangun rumah impian Anda!`,
-        narration: `Halo! Saya mau tawarkan tanah istimewa di ${data.location}. Luasnya ${data.size}, dengan harga yang sangat menarik ${data.price}. ${data.sellingPoints || 'Lokasi strategis dengan potensi investasi tinggi'}. Kesempatan terbatas, jangan sampai kehabisan!`,
-        full_script: `[Opening]\nHalo teman-teman! Ada kabar baik nih untuk yang lagi cari tanah investasi.\n\n[Main Content]\nSaya punya tanah premium di ${data.location}. Ukurannya ${data.size}, sangat cocok untuk berbagai keperluan. Harganya ${data.price} - ini harga spesial loh!\n\n${data.sellingPoints ? `[Key Features]\n${data.sellingPoints}\n\n` : ''}[Closing]\nJangan sampai menyesal karena kehabisan kesempatan emas ini. Hubungi saya sekarang via WhatsApp untuk info lebih lengkap!`,
-        key_points: [
-          `Lokasi strategis di ${data.location}`,
-          `Luas tanah ${data.size}`,
-          `Harga kompetitif ${data.price}`,
-          ...(data.sellingPoints ? data.sellingPoints.split(',').map(p => p.trim()).slice(0, 2) : []),
-        ],
-        cta: "Hubungi sekarang via WhatsApp! Stok terbatas, jangan sampai kehabisan kesempatan investasi terbaik ini. Chat langsung untuk info lengkap dan survey lokasi!"
-      };
-      
-      setGeneratedOutput(mockOutput);
+      const { data: response, error } = await supabase.functions.invoke('generate-property-ad', {
+        body: { propertyData: data }
+      });
+
+      if (error) {
+        console.error("Edge function error:", error);
+        throw new Error(error.message || "Failed to generate content");
+      }
+
+      if (!response || !response.output) {
+        throw new Error("Invalid response from server");
+      }
+
+      setGeneratedOutput(response.output);
       toast({
         title: "Success!",
         description: "Ad content generated successfully",
       });
     } catch (error) {
+      console.error("Generation error:", error);
       toast({
         title: "Error",
-        description: "Failed to generate content. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to generate content. Please try again.",
         variant: "destructive",
       });
     } finally {
