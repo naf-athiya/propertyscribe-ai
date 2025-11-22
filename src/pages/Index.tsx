@@ -6,60 +6,57 @@ import { Card } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedOutput, setGeneratedOutput] = useState<any>(null);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const handleImageSelect = (file: File, preview: string) => {
     setSelectedFile(file);
     setSelectedImage(preview);
   };
-
   const handleImageClear = () => {
     setSelectedFile(null);
     setSelectedImage(null);
   };
-
   const handleGenerate = async (data: PropertyData) => {
     setIsGenerating(true);
-    
     try {
-      const { data: response, error } = await supabase.functions.invoke('generate-property-ad', {
-        body: { propertyData: data }
+      const {
+        data: response,
+        error
+      } = await supabase.functions.invoke('generate-property-ad', {
+        body: {
+          propertyData: data
+        }
       });
-
       if (error) {
         console.error("Edge function error:", error);
         throw new Error(error.message || "Failed to generate content");
       }
-
       if (!response || !response.output) {
         throw new Error("Invalid response from server");
       }
-
       setGeneratedOutput(response.output);
       toast({
         title: "Success!",
-        description: "Ad content generated successfully",
+        description: "Ad content generated successfully"
       });
     } catch (error) {
       console.error("Generation error:", error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to generate content. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsGenerating(false);
     }
   };
-
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       {/* Hero Header */}
       <div className="bg-gradient-to-r from-primary to-primary-glow py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -86,41 +83,27 @@ const Index = () => {
               <p className="text-muted-foreground">Start by uploading a high-quality photo of your property</p>
             </div>
             
-            <ImageUpload
-              onImageSelect={handleImageSelect}
-              selectedImage={selectedImage}
-              onClear={handleImageClear}
-            />
+            <ImageUpload onImageSelect={handleImageSelect} selectedImage={selectedImage} onClear={handleImageClear} />
 
-            {selectedImage && (
-              <>
+            {selectedImage && <>
                 <div className="border-t border-border pt-8">
                   <h2 className="text-2xl font-bold text-foreground mb-2">Property Details</h2>
                   <p className="text-muted-foreground mb-6">Fill in the information about your property</p>
                   
-                  <PropertyForm
-                    onGenerate={handleGenerate}
-                    isGenerating={isGenerating}
-                    hasImage={!!selectedImage}
-                  />
+                  <PropertyForm onGenerate={handleGenerate} isGenerating={isGenerating} hasImage={!!selectedImage} />
                 </div>
-              </>
-            )}
+              </>}
           </div>
         </Card>
 
         {/* Output Section */}
-        {generatedOutput && (
-          <GeneratedOutput output={generatedOutput} />
-        )}
+        {generatedOutput && <GeneratedOutput output={generatedOutput} />}
       </div>
 
       {/* Footer */}
       <div className="max-w-5xl mx-auto px-4 py-8 text-center text-muted-foreground text-sm">
-        <p>Built with Lovable • Optimized for Indonesian Property Market</p>
+        <p>Built with Lovable • Optimized for Property Market</p>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
