@@ -6,12 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface GeneratedOutputProps {
   output: {
-    ad_copy: string;
     narration: string;
-    short_hook: string;
-    full_script: string;
-    key_points: string[];
-    cta: string;
   };
 }
 
@@ -77,43 +72,36 @@ export const GeneratedOutput = ({ output }: GeneratedOutputProps) => {
       </div>
 
       <div className="grid gap-6">
-        <OutputCard title="Short Hook" content={output.short_hook} field="Short Hook" />
-        
-        <OutputCard title="Ad Copy" content={output.ad_copy} field="Ad Copy" />
-        
-        <OutputCard title="Narration Script" content={output.narration} field="Narration Script" />
-        
-        <OutputCard title="Full Script" content={output.full_script} field="Full Script" />
-        
-        <Card className="p-6 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 animate-slide-up">
-          <div className="flex items-start justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Key Selling Points</h3>
+        <Card className="p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 animate-slide-up">
+          <div className="flex items-start justify-between mb-6">
+            <h3 className="text-xl font-semibold text-foreground">10-Second Script</h3>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => copyToClipboard(output.key_points.join("\n"), "Key Points")}
+              onClick={() => copyToClipboard(output.narration, "Narration Script")}
               className="rounded-full hover:bg-accent"
             >
-              {copiedField === "Key Points" ? (
+              {copiedField === "Narration Script" ? (
                 <Check className="w-4 h-4 text-primary" />
               ) : (
                 <Copy className="w-4 h-4 text-muted-foreground" />
               )}
             </Button>
           </div>
-          <ul className="space-y-2">
-            {output.key_points.map((point, idx) => (
-              <li key={idx} className="flex items-start">
-                <span className="w-6 h-6 rounded-full bg-accent text-primary text-sm font-semibold flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
-                  {idx + 1}
-                </span>
-                <span className="text-foreground leading-relaxed">{point}</span>
-              </li>
-            ))}
-          </ul>
+          <p className="text-lg text-foreground whitespace-pre-wrap leading-relaxed">{output.narration}</p>
         </Card>
 
-        <OutputCard title="Call to Action" content={output.cta} field="CTA" />
+        <Card className="p-6 rounded-2xl shadow-soft overflow-hidden animate-slide-up">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Example Video</h3>
+          <video 
+            className="w-full rounded-lg"
+            controls
+            loop
+          >
+            <source src="/videos/example-video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </Card>
       </div>
     </div>
   );

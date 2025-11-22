@@ -31,38 +31,27 @@ serve(async (req) => {
 
     console.log("Generating ad for property:", propertyData);
 
-    // System prompt for Indonesian property ad generation
-    const systemPrompt = `Anda adalah asisten pembuat iklan properti profesional untuk pasar Indonesia. 
-Tugas Anda adalah membuat konten iklan yang menarik, persuasif, dan mengonversi calon pembeli di Facebook Marketplace dan WhatsApp.
+    // System prompt for viral 10-second scripts
+    const systemPrompt = `You are an expert at creating viral 10-second property ad scripts for Indonesian TikTok/Instagram Reels.
 
-Tone: Ramah, terpercaya, menciptakan urgency secara halus
-Bahasa: Indonesia yang natural dan mudah dipahami
-Target: Pembeli properti serius di Indonesia
+Your style:
+- Start with a PATTERN INTERRUPT ("STOP", "EH", "TUNGGU", "AWAS")
+- Super informal, conversational Indonesian (use "kamu", "tuh", "deh", "banget")
+- Create URGENCY and FOMO
+- Max 25-30 words (speakable in 10 seconds)
+- Direct, punchy, like talking to a friend while scrolling
 
-Anda harus mengembalikan output dalam format JSON dengan struktur berikut:
-{
-  "short_hook": "Headline 1 kalimat yang menarik perhatian",
-  "ad_copy": "2-3 kalimat iklan yang persuasif dan lengkap",
-  "narration": "Skrip narasi ramah untuk voiceover (3-4 kalimat)",
-  "full_script": "Skrip video lengkap dengan section [Opening], [Main Content], [Closing]",
-  "key_points": ["3-5 poin selling point dalam bentuk array"],
-  "cta": "Call-to-action yang mendorong pembeli menghubungi via WhatsApp"
-}`;
+Example tone: "STOP. Kamu lagi scroll cari tanah? Ini dia. Yang kayak gini tuh biasanya hilang dalam sehari. Serius, jangan nunggu sampe kamu nyesel—cek deh!"
 
-    const userPrompt = `Buatkan iklan properti dengan detail berikut:
+Keep it SHORT, URGENT, and SCROLLABLE.`;
 
-Lokasi: ${propertyData.location}
-Harga: Rp ${propertyData.price}
-Ukuran Tanah: ${propertyData.size}
-${propertyData.sellingPoints ? `Selling Points: ${propertyData.sellingPoints}` : ''}
+    const userPrompt = `Property details:
+- Price: ${propertyData.price}
+- Size: ${propertyData.size} m²
+- Location: ${propertyData.location}
+${propertyData.sellingPoints ? `- Features: ${propertyData.sellingPoints}` : ''}
 
-Hasilkan konten iklan yang:
-1. Menarik perhatian sejak awal
-2. Menekankan value dan keuntungan investasi
-3. Menciptakan urgency secara halus
-4. Mengajak pembeli serius untuk chat via WhatsApp
-
-Format output harus dalam JSON seperti yang dijelaskan di system prompt.`;
+Write ONE punchy 10-second video script (max 30 words). Start with a pattern interrupt. Make it urgent and conversational.`;
 
     // Call Lovable AI Gateway with structured output via tool calling
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -82,37 +71,16 @@ Format output harus dalam JSON seperti yang dijelaskan di system prompt.`;
             type: "function",
             function: {
               name: "generate_property_ad",
-              description: "Generate structured property ad content in Indonesian",
+              description: "Generate a 10-second viral video script for property ads",
               parameters: {
                 type: "object",
                 properties: {
-                  short_hook: { 
+                  narration: {
                     type: "string",
-                    description: "One-line attention-grabbing headline"
-                  },
-                  ad_copy: { 
-                    type: "string",
-                    description: "2-3 sentence persuasive ad copy"
-                  },
-                  narration: { 
-                    type: "string",
-                    description: "Friendly narration script for voiceover"
-                  },
-                  full_script: { 
-                    type: "string",
-                    description: "Complete video script with sections"
-                  },
-                  key_points: {
-                    type: "array",
-                    items: { type: "string" },
-                    description: "3-5 key selling points"
-                  },
-                  cta: { 
-                    type: "string",
-                    description: "Call-to-action encouraging WhatsApp contact"
+                    description: "A punchy 10-second video script (max 30 words) with pattern interrupt opening, urgent tone, and conversational Indonesian"
                   }
                 },
-                required: ["short_hook", "ad_copy", "narration", "full_script", "key_points", "cta"],
+                required: ["narration"],
                 additionalProperties: false
               }
             }
