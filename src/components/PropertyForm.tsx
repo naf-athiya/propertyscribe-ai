@@ -104,7 +104,7 @@ export const PropertyForm = ({ onGenerate, isGenerating, hasImage }: PropertyFor
         ) : (
           <>
             <Sparkles className="w-5 h-5 mr-2" />
-            Generate Ad Content
+            generate an influencer-style video
           </>
         )}
       </Button>
