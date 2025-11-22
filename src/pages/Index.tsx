@@ -68,7 +68,7 @@ const Index = () => {
             Generate Instant Property Video Ads
           </h1>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
-            Upload your property image and details. Get professional ad copy and video scripts in seconds.
+            Upload your property image and details. Get professional influencer style video and scripts in seconds.
           </p>
         </div>
       </div>
