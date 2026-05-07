@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      generations: {
+        Row: {
+          created_at: string
+          error: string | null
+          fal_request_id: string | null
+          id: string
+          influencer_image_url: string | null
+          property_data: Json
+          property_image_url: string | null
+          script: string | null
+          status: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          fal_request_id?: string | null
+          id?: string
+          influencer_image_url?: string | null
+          property_data?: Json
+          property_image_url?: string | null
+          script?: string | null
+          status?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          fal_request_id?: string | null
+          id?: string
+          influencer_image_url?: string | null
+          property_data?: Json
+          property_image_url?: string | null
+          script?: string | null
+          status?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
